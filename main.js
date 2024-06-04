@@ -22,26 +22,26 @@ function preload() {
   this.load.image('number3', 'assets/images/carta.png');
 }
 
-function create() {
-  // Inicializar o tabuleiro do jogo e outros elementos
-  this.gameBoard = new GameBoard(this);
-  this.gameBoard.createBoard();
-  
-  this.score = 0;
-  this.scoreText = this.add.text(10, 10, 'Score: 0', { fontSize: '32px', fill: '#fff' });
-  
-  this.resetButton = this.add.text(700, 10, 'Reset', { fontSize: '32px', fill: '#fff' });
-  this.resetButton.setInteractive();
-  this.resetButton.on('pointerdown', () => this.resetGame());
+class create {
+  constructor() {
+    // Inicializar o tabuleiro do jogo e outros elementos
+    this.gameBoard = new GameBoard(this);
+    this.gameBoard.createBoard();
+
+    this.score = 0;
+    this.scoreText = this.add.text(10, 10, 'Score: 0', { fontSize: '32px', fill: '#fff' });
+
+    this.resetButton = this.add.text(700, 10, 'Reset', { fontSize: '32px', fill: '#fff' });
+    this.resetButton.setInteractive();
+    this.resetButton.on('pointerdown', () => this.resetGame());
+  }
 }
 
 
 function update() {
 
   this.gameBoard();
-
-
-
+  
 }
 
 class GameBoard {
@@ -60,5 +60,30 @@ class GameBoard {
       }
     }
     this.assignValuesAndBombs();
+  }
+}
+
+assignValuesAndBombs() {
+  let totalBombs = 6; // Número de bombas
+  let totalValues = 19; // Total de valores
+
+  while (totalBombs > 0) {
+    const row = Phaser.Math.Between(0, this.boardSize - 1);
+    const col = Phaser.Math.Between(0, this.boardSize - 1);
+    if (!this.grid[row][col].isBomb) {
+      this.grid[row][col].isBomb = true;
+      this.grid[row][col].value = 0;
+      totalBombs--;
+    }
+  }
+
+  while (totalValues > 0) {
+    const row = Phaser.Math.Between(0, this.boardSize - 1);
+    const col = Phaser.Math.Between(0, this.boardSize - 1);
+    if (!this.grid[row][col].isBomb && this.grid[row][col].value === 1) {
+      const value = Phaser.Math.Between(1, 3);
+      this.grid[row][col].value = value;
+      totalValues -= value;
+    }
   }
 }
