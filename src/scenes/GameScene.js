@@ -82,7 +82,12 @@ class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setPadding(10)
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.scene.restart());
+      .on('pointerdown', () => this.restartGame());
+  }
+
+  restartGame() {
+    this.gameOverFlag = false;
+    this.scene.restart();
   }
 
   revealTile(tile, row, col) {
@@ -114,7 +119,7 @@ class GameScene extends Phaser.Scene {
     this.coins = 0;
     this.coinsText.setText('Coins: ' + this.coins);
     this.totalCoinsText.setText('Total Coins: ' + this.totalCoins);
-    this.scene.restart();
+    this.restartGame();
   }
 
   gameOver() {
@@ -130,10 +135,10 @@ class GameScene extends Phaser.Scene {
     this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Game Over!', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
 
     // Create a restart button
-    let restartButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 50, 'Restart', { fontSize: '32px', fill: '#ffffff', backgroundColor: '#ff0000' })
+    let restartButton = this.add.text(this.cameras.main.centerX, 100, 'Restart', { fontSize: '32px', fill: '#ffffff', backgroundColor: '#ff0000' })
       .setOrigin(0.5)
       .setPadding(10)
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.scene.restart());
+      .on('pointerdown', () => this.restartGame());
   }
 }
