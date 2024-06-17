@@ -126,6 +126,22 @@ class GameScene extends Phaser.Scene {
     console.log('Game Over!');
     this.gameOverFlag = true;
 
+    for (let row = 0; row < this.board.length; row++) { // Reveal bombs
+      for (let col = 0; col < this.board[row].length; col++) {
+        let cell = this.board[row][col];
+        if (!cell.isRevealed) {
+          if (cell.isBomb) {
+            cell.tile.setTexture('bomb');
+          } else {
+            cell.tile.setTexture('tile'); // Use appropriate texture for points if available
+            cell.tile.setTint(0x00ff00);
+            this.add.text(cell.tile.x + 50, cell.tile.y + 50, cell.points, { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
+          }
+          cell.isRevealed = true;
+        }
+      }
+    }
+
     // Create a semi-transparent background
     let gameOverBackground = this.add.graphics();
     gameOverBackground.fillStyle(0x000000, 0.7);
