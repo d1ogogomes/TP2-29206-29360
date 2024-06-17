@@ -105,9 +105,8 @@ class GameScene extends Phaser.Scene {
       // Lógica para revelar uma célula segura com pontos
       let points = this.board[row][col].points
       this.incrementCoins(points)
-      tile.setTexture('tile') // Você pode substituir isso por uma textura que represente pontos, se disponível
-      tile.setTint(0x00ff00) // Opcional: mudar a cor da peça para indicar que foi revelada
-      this.add.text(tile.x + 50, tile.y + 50, points, { fontSize: '32px', fill: '#000' }).setOrigin(0.5) // Cor preta para contraste
+      tile.setTexture(points.toString()) // Ajustar a textura para mostrar a imagem do número correspondente
+      tile.setDisplaySize(100, 100) // Garantir que a imagem do número tenha o mesmo tamanho da tile
 
       // Verificar se todas as células seguras foram reveladas
       if (this.checkLevelComplete()) {
@@ -153,26 +152,10 @@ class GameScene extends Phaser.Scene {
     console.log('Game Over!')
     this.gameOverFlag = true
 
-    for (let row = 0; row < this.board.length; row++) { // Reveal bombs
-      for (let col = 0; col < this.board[row].length; col++) {
-        let cell = this.board[row][col];
-        if (!cell.isRevealed) {
-          if (cell.isBomb) {
-            cell.tile.setTexture('bomb');
-          } else {
-            cell.tile.setTexture('tile'); // Use appropriate texture for points if available
-            cell.tile.setTint(0x00ff00);
-            this.add.text(cell.tile.x + 50, cell.tile.y + 50, cell.points, { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
-          }
-          cell.isRevealed = true;
-        }
-      }
-    }
-
-    // Create a semi-transparent background
-    let gameOverBackground = this.add.graphics();
-    gameOverBackground.fillStyle(0x000000, 0.7);
-    gameOverBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+    // Criar um fundo semitransparente
+    let gameOverBackground = this.add.graphics()
+    gameOverBackground.fillStyle(0x000000, 0.7)
+    gameOverBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height)
 
     // Exibir texto de fim de jogo
     this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Game Over!', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5)
