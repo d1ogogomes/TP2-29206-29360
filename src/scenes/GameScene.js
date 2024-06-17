@@ -153,12 +153,6 @@ class GameScene extends Phaser.Scene {
     console.log('Game Over!')
     this.gameOverFlag = true
 
-<<<<<<< HEAD
-    // Criar um fundo semitransparente
-    let gameOverBackground = this.add.graphics()
-    gameOverBackground.fillStyle(0x000000, 0.7)
-    gameOverBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height)
-=======
     for (let row = 0; row < this.board.length; row++) { // Reveal bombs
       for (let col = 0; col < this.board[row].length; col++) {
         let cell = this.board[row][col];
@@ -179,7 +173,6 @@ class GameScene extends Phaser.Scene {
     let gameOverBackground = this.add.graphics();
     gameOverBackground.fillStyle(0x000000, 0.7);
     gameOverBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
->>>>>>> 83b1b9350e0ceca9b65f20645e7d7b4909f90a3b
 
     // Exibir texto de fim de jogo
     this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Game Over!', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5)
