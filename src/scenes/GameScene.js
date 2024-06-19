@@ -123,6 +123,7 @@ class GameScene extends Phaser.Scene {
 
   showHelp() {
     const revealSafePrice = 100;
+    const revealRowColPrice = 200;
 
     // Criar um fundo semitransparente
     let helpBackground = this.add.graphics();
@@ -130,10 +131,10 @@ class GameScene extends Phaser.Scene {
     helpBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
     // Exibir texto de ajuda
-    let helpText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Chose a help:', { fontSize: '32px', fill: '#ffffff' }).setOrigin(0.5);
+    let helpText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 150, 'Choose a help:', { fontSize: '32px', fill: '#ffffff' }).setOrigin(0.5);
 
     // Botão para revelar uma célula segura
-    let revealSafeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, `Reveal safe cell (${revealSafePrice} coins)`, { fontSize: '32px', fill: '#fff', backgroundColor: '#008000' })
+    let revealSafeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, `Reveal safe cell (${revealSafePrice} coins)`, { fontSize: '32px', fill: '#fff', backgroundColor: '#008000' })
       .setOrigin(0.5)
       .setPadding(10)
       .setInteractive({ useHandCursor: true })
@@ -145,10 +146,33 @@ class GameScene extends Phaser.Scene {
           helpBackground.destroy();
           helpText.destroy();
           revealSafeButton.destroy();
+          revealRowColButton.destroy();
           closeButton.destroy();
         } else {
           // Mostrar mensagem de erro
           let errorText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, 'Moedas insuficientes!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
+          this.time.delayedCall(2000, () => errorText.destroy(), [], this); // Mensagem desaparece após 2 segundos
+        }
+      });
+
+    // Botão para revelar uma linha ou coluna
+    let revealRowColButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 50, `Reveal row/column (${revealRowColPrice} coins)`, { fontSize: '32px', fill: '#fff', backgroundColor: '#008000' })
+      .setOrigin(0.5)
+      .setPadding(10)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => {
+        if (this.totalCoins >= revealRowColPrice) {
+          this.totalCoins -= revealRowColPrice;
+          this.chooseRowOrColumn();
+          this.totalCoinsText.setText('Total Coins: ' + this.totalCoins);
+          helpBackground.destroy();
+          helpText.destroy();
+          revealSafeButton.destroy();
+          revealRowColButton.destroy();
+          closeButton.destroy();
+        } else {
+          // Mostrar mensagem de erro
+          let errorText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 150, 'Moedas insuficientes!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
           this.time.delayedCall(2000, () => errorText.destroy(), [], this); // Mensagem desaparece após 2 segundos
         }
       });
@@ -162,24 +186,78 @@ class GameScene extends Phaser.Scene {
         helpBackground.destroy();
         helpText.destroy();
         revealSafeButton.destroy();
+        revealRowColButton.destroy();
         closeButton.destroy();
       });
   }
 
-  revealSafeCell() {
-    let safeCells = [];
-    for (let row = 0; row < this.board.length; row++) {
-      for (let col = 0; col < this.board[row].length; col++) {
-        if (!this.board[row][col].isRevealed && !this.board[row][col].isBomb) {
-          safeCells.push({ row, col });
+  chooseRowOrColumn() {
+    // Criar um fundo semitransparente
+    let chooseBackground = this.add.graphics();
+    chooseBackground.fillStyle(0x000000, 0.7);
+    chooseBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+
+    // Texto para escolher linha ou coluna
+    let chooseText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Choose a row or column to reveal:', { fontSize: '32px', fill: '#ffffff' }).setOrigin(0.5);
+
+    // Botão para escolher linha
+    let chooseRowButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Row', { fontSize: '32px', fill: '#fff', backgroundColor: '#008000' })
+      .setOrigin(0.5)
+      .setPadding(10)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => {
+        let row = parseInt(prompt('Enter Row (0-4):'));
+        if (!isNaN(row) && row >= 0 && row <= 4) {
+          this.revealRow(row);
+          chooseBackground.destroy();
+          chooseText.destroy();
+          chooseRowButton.destroy();
+          chooseColButton.destroy();
+        } else {
+          alert('Invalid input. Please enter a number between 0 and 4.');
+        }
+      });
+
+    // Botão para escolher coluna
+    let chooseColButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, 'Column', { fontSize: '32px', fill: '#fff', backgroundColor: '#008000' })
+      .setOrigin(0.5)
+      .setPadding(10)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => {
+        let col = parseInt(prompt('Enter Column (0-4):'));
+        if (!isNaN(col) && col >= 0 && col <= 4) {
+          this.revealColumn(col);
+          chooseBackground.destroy();
+          chooseText.destroy();
+          chooseRowButton.destroy();
+          chooseColButton.destroy();
+        } else {
+          alert('Invalid input. Please enter a number between 0 and 4.');
+        }
+      });
+  }
+
+  revealRow(row) {
+    for (let col = 0; col < this.board[row].length; col++) {
+      if (!this.board[row][col].isRevealed) {
+        if (this.board[row][col].isBomb) {
+          this.board[row][col].tile.setTint(0xff0000); // Highlight bomb tile in red
+        } else {
+          this.revealTile(this.board[row][col].tile, row, col, true);
         }
       }
     }
+  }
 
-    if (safeCells.length > 0) {
-      let randomIndex = Math.floor(Math.random() * safeCells.length);
-      let cell = safeCells[randomIndex];
-      this.revealTile(this.board[cell.row][cell.col].tile, cell.row, cell.col);
+  revealColumn(col) {
+    for (let row = 0; row < this.board.length; row++) {
+      if (!this.board[row][col].isRevealed) {
+        if (this.board[row][col].isBomb) {
+          this.board[row][col].tile.setTint(0xff0000); // Highlight bomb tile in red
+        } else {
+          this.revealTile(this.board[row][col].tile, row, col, true);
+        }
+      }
     }
   }
 
@@ -187,19 +265,20 @@ class GameScene extends Phaser.Scene {
     this.gameOverFlag = false;
     this.level = 1;
     this.coins = 0;
-    this.totalCoins = 0;
     this.scene.restart();
   }
 
-  revealTile(tile, row, col) {
-    if (this.board[row][col].isRevealed || this.gameOverFlag) return;
+  revealTile(tile, row, col, skipGameOver = false) {
+    if (this.board[row][col].isRevealed || (this.gameOverFlag && !skipGameOver)) return;
 
     this.board[row][col].isRevealed = true;
     if (this.board[row][col].isBomb) {
       tile.setTexture('bomb');
-      this.coins -= 5; // Deduzir pontos quando uma bomba é clicada
-      this.coinsText.setText(`Coins: ${this.coins} | Level: ${this.level}`);
-      this.gameOver();
+      if (!skipGameOver) {
+        this.coins -= 5; // Deduzir pontos quando uma bomba é clicada
+        this.coinsText.setText(`Coins: ${this.coins} | Level: ${this.level}`);
+        this.gameOver();
+      }
     } else {
       // Lógica para revelar uma célula segura com pontos
       let points = this.board[row][col].points;
@@ -208,7 +287,7 @@ class GameScene extends Phaser.Scene {
       tile.setDisplaySize(100, 100); // Garantir que a imagem do número tenha o mesmo tamanho da tile
 
       // Verificar se todas as células seguras foram reveladas
-      if (this.checkLevelComplete()) {
+      if (this.checkLevelComplete() && !skipGameOver) {
         this.nextLevel();
       }
     }
@@ -240,6 +319,10 @@ class GameScene extends Phaser.Scene {
     this.coins = 0;
     this.coinsText.setText(`Coins: ${this.coins} | Level: ${this.level}`);
     this.totalCoinsText.setText('Total Coins: ' + this.totalCoins);
+
+    // Reiniciar o nível e o tabuleiro
+    this.level = 1;
+    this.scene.restart();
   }
 
   revealAllBombs() {
@@ -309,7 +392,7 @@ Tips:
     }).setOrigin(0.5, 0.5);
 
     // Botão para fechar o tutorial
-    let closeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 300, 'Fechar', {
+    let closeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 300, 'Close', {
         fontSize: '32px', 
         fill: '#ffffff', 
         backgroundColor: '#ff0000'
