@@ -4,6 +4,7 @@ class GameScene extends Phaser.Scene {
     this.coins = 0;
     this.totalCoins = 0;
     this.level = 1;
+    this.highestLevel = 1; // Novo: nível mais alto alcançado
     this.gameOverFlag = false; // Para verificar se o jogo acabou
   }
 
@@ -56,12 +57,27 @@ class GameScene extends Phaser.Scene {
           tile: tile,
           isRevealed: false,
           isBomb: isBomb,
-          points: isBomb ? 0 : Math.floor(Math.random() * 3) + 1 // Pontos aleatórios entre 1 e 3 se não for bomba
+          points: this.getTilePoints(this.level, isBomb) // Ajustar pontos conforme o nível
         };
       }
     }
 
     this.board = board;
+  }
+
+  getTilePoints(level, isBomb) {
+    if (isBomb) {
+      return 0;
+    }
+    if (level === 1 || level === 2) {
+      return Math.floor(Math.random() * 3) + 1; // Pontos aleatórios entre 1 e 3
+    } else if (level === 3) {
+      return Math.floor(Math.random() * 3) + 2; // Pontos aleatórios entre 2 e 4
+    } else if (level === 4) {
+      return Math.floor(Math.random() * 3) + 3; // Pontos aleatórios entre 3 e 5
+    } else {
+      return Math.floor(Math.random() * 2) + 4; // Pontos aleatórios entre 4 e 5
+    }
   }
 
   createBombIndicators() {
@@ -87,6 +103,14 @@ class GameScene extends Phaser.Scene {
   createCoinsText() {
     this.coinsText = this.add.text(this.cameras.main.width / 2, 20, `Coins: ${this.coins} | Level: ${this.level}`, { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0); // Cor preta para contraste
     this.totalCoinsText = this.add.text(this.cameras.main.width / 2, 60, `Total Coins: ${this.totalCoins}`, { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0); // Cor preta para contraste
+    this.highestLevelText = this.add.text(this.cameras.main.width / 2, 100, `Highest Level: ${this.highestLevel}`, { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0); // Cor preta para contraste
+  }
+
+  updateHighestLevel() {
+    if (this.level > this.highestLevel) {
+      this.highestLevel = this.level;
+      this.highestLevelText.setText(`Highest Level: ${this.highestLevel}`);
+    }
   }
 
   createButtons() {
@@ -172,7 +196,7 @@ class GameScene extends Phaser.Scene {
           closeButton.destroy();
         } else {
           // Mostrar mensagem de erro
-          let errorText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 150, 'Moedas insuficientes!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
+          let errorText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 150, 'Not enough coins!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
           this.time.delayedCall(2000, () => errorText.destroy(), [], this); // Mensagem desaparece após 2 segundos
         }
       });
@@ -192,17 +216,21 @@ class GameScene extends Phaser.Scene {
   }
 
   revealSafeCell() {
-    // Iterate through the board to find the first safe cell that is not revealed
+    let safeCells = [];
     for (let row = 0; row < this.board.length; row++) {
       for (let col = 0; col < this.board[row].length; col++) {
         if (!this.board[row][col].isRevealed && !this.board[row][col].isBomb) {
-          // Found a safe cell, reveal it
-          this.revealTile(this.board[row][col].tile, row, col);
-          return; // Exit the function after revealing the first safe cell found
+          safeCells.push({ row, col });
         }
       }
     }
-  }  
+
+    if (safeCells.length > 0) {
+      let randomIndex = Math.floor(Math.random() * safeCells.length);
+      let cell = safeCells[randomIndex];
+      this.revealTile(this.board[cell.row][cell.col].tile, cell.row, cell.col);
+    }
+  }
 
   chooseRowOrColumn() {
     // Criar um fundo semitransparente
@@ -324,6 +352,7 @@ class GameScene extends Phaser.Scene {
 
   nextLevel() {
     this.level++;
+    this.updateHighestLevel(); // Atualizar o nível mais alto alcançado
     this.scene.restart();
   }
 
@@ -417,6 +446,5 @@ Tips:
           tutorialTextObject.destroy();
           closeButton.destroy();
       });
+  }
 }
-}
-// yuck 2
