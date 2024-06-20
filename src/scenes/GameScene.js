@@ -130,17 +130,13 @@ class GameScene extends Phaser.Scene {
   }
 
   createHelpButton() {
-    const boardWidth = 5 * (100 + 10) - 10; // 5 colunas, 100px cada, 10px margem, -10 para ajuste final
-    const offsetX = (this.cameras.main.width - boardWidth) / 2;
-    const buttonX = offsetX + boardWidth + 150; // 50px de distância do lado direito do tabuleiro
-    const buttonY = (this.cameras.main.height - 50) / 2; // Centralizado verticalmente em relação ao tabuleiro
-  
-    let helpButton = this.add.text(buttonX, buttonY, 'Help Shop', { fontSize: '32px', fill: '#fff', backgroundColor: '#0000ff' })
-      .setOrigin(0.5)
-      .setPadding(10)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.showHelp());
-  }
+    let helpButton = this.add.text(this.cameras.main.width / 2, this.cameras.main.height - 150, 'Help Shop', { fontSize: '32px', fill: '#fff', backgroundColor: '#0000ff' })
+        .setOrigin(0.5)
+        .setPadding(10)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerdown', () => this.showHelp());
+}
+
   
   createTutorialButton() {
     let tutorialButton = this.add.text(this.cameras.main.width - 100, 20, 'Tutorial', { fontSize: '32px', fill: '#fff', backgroundColor: '#0000ff' })
