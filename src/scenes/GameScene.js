@@ -4,8 +4,8 @@ class GameScene extends Phaser.Scene {
     this.coins = 0;
     this.totalCoins = 0;
     this.level = 1;
-    this.highestLevel = 1; // Novo: nível mais alto alcançado
-    this.gameOverFlag = false; // Para verificar se o jogo acabou
+    this.highestLevel = 1; 
+    this.gameOverFlag = false; 
   }
 
   create() {
@@ -27,7 +27,7 @@ class GameScene extends Phaser.Scene {
     const totalWidth = cols * (tileSize + margin) - margin;
     const totalHeight = rows * (tileSize + margin) - margin;
     const offsetX = (this.cameras.main.width - totalWidth) / 2;
-    const offsetY = (this.cameras.main.height - totalHeight) / 2 + 50; // Ajustado para padding superior
+    const offsetY = (this.cameras.main.height - totalHeight) / 2 + 50; 
 
     let bombCount;
     if (this.level === 1) {
@@ -101,7 +101,7 @@ class GameScene extends Phaser.Scene {
   }
 
   createCoinsText() {
-    this.coinsText = this.add.text(this.cameras.main.width / 2, 20, `Coins: ${this.coins} | Level: ${this.level}`, { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0); // Cor preta para contraste
+    this.coinsText = this.add.text(this.cameras.main.width / 2, 20, `Current Coins: ${this.coins} | Level: ${this.level}`, { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0); // Cor preta para contraste
     this.totalCoinsText = this.add.text(this.cameras.main.width / 2, 60, `Total Coins: ${this.totalCoins}`, { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0); // Cor preta para contraste
     this.highestLevelText = this.add.text(this.cameras.main.width / 2, 100, `Highest Level: ${this.highestLevel}`, { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0); // Cor preta para contraste
   }
@@ -130,13 +130,18 @@ class GameScene extends Phaser.Scene {
   }
 
   createHelpButton() {
-    let helpButton = this.add.text(this.cameras.main.width / 2, this.cameras.main.height - 50, 'Help', { fontSize: '32px', fill: '#fff', backgroundColor: '#0000ff' })
+    const boardWidth = 5 * (100 + 10) - 10; // 5 colunas, 100px cada, 10px margem, -10 para ajuste final
+    const offsetX = (this.cameras.main.width - boardWidth) / 2;
+    const buttonX = offsetX + boardWidth + 150; // 50px de distância do lado direito do tabuleiro
+    const buttonY = (this.cameras.main.height - 50) / 2; // Centralizado verticalmente em relação ao tabuleiro
+  
+    let helpButton = this.add.text(buttonX, buttonY, 'Help Shop', { fontSize: '32px', fill: '#fff', backgroundColor: '#0000ff' })
       .setOrigin(0.5)
       .setPadding(10)
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.showHelp());
   }
-
+  
   createTutorialButton() {
     let tutorialButton = this.add.text(this.cameras.main.width - 100, 20, 'Tutorial', { fontSize: '32px', fill: '#fff', backgroundColor: '#0000ff' })
       .setOrigin(0.5, 0) // Alinhar ao canto superior direito
@@ -174,7 +179,7 @@ class GameScene extends Phaser.Scene {
           closeButton.destroy();
         } else {
           // Mostrar mensagem de erro
-          let errorText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, 'Moedas insuficientes!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
+          let errorText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, 'Not enough coins!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
           this.time.delayedCall(2000, () => errorText.destroy(), [], this); // Mensagem desaparece após 2 segundos
         }
       });
@@ -202,7 +207,7 @@ class GameScene extends Phaser.Scene {
       });
   
     // Botão para fechar a ajuda
-    let closeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 200, 'Fechar', { fontSize: '32px', fill: '#fff', backgroundColor: '#ff0000' })
+    let closeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 200, 'Close', { fontSize: '32px', fill: '#fff', backgroundColor: '#ff0000' })
       .setOrigin(0.5)
       .setPadding(10)
       .setInteractive({ useHandCursor: true })
