@@ -4,7 +4,7 @@ class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    // Carregar todas as imagens necessárias
+
     this.load.image('tile', 'assets/tile.png')
     this.load.image('bomb', 'assets/bomb.png')
     this.load.image('1', 'assets/1.png') 

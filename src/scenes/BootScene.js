@@ -4,7 +4,6 @@ class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    // Load any assets needed before the PreloadScene
   }
 
   create() {
