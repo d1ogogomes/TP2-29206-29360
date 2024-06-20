@@ -124,15 +124,15 @@ class GameScene extends Phaser.Scene {
   showHelp() {
     const revealSafePrice = 100;
     const revealRowColPrice = 200;
-
+  
     // Criar um fundo semitransparente
     let helpBackground = this.add.graphics();
     helpBackground.fillStyle(0x000000, 0.7);
     helpBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
-
+  
     // Exibir texto de ajuda
     let helpText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 150, 'Choose a help:', { fontSize: '32px', fill: '#ffffff' }).setOrigin(0.5);
-
+  
     // Botão para revelar uma célula segura
     let revealSafeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, `Reveal safe cell (${revealSafePrice} coins)`, { fontSize: '32px', fill: '#fff', backgroundColor: '#008000' })
       .setOrigin(0.5)
@@ -154,7 +154,7 @@ class GameScene extends Phaser.Scene {
           this.time.delayedCall(2000, () => errorText.destroy(), [], this); // Mensagem desaparece após 2 segundos
         }
       });
-
+  
     // Botão para revelar uma linha ou coluna
     let revealRowColButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 50, `Reveal row/column (${revealRowColPrice} coins)`, { fontSize: '32px', fill: '#fff', backgroundColor: '#008000' })
       .setOrigin(0.5)
@@ -176,7 +176,7 @@ class GameScene extends Phaser.Scene {
           this.time.delayedCall(2000, () => errorText.destroy(), [], this); // Mensagem desaparece após 2 segundos
         }
       });
-
+  
     // Botão para fechar a ajuda
     let closeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 200, 'Fechar', { fontSize: '32px', fill: '#fff', backgroundColor: '#ff0000' })
       .setOrigin(0.5)
@@ -190,6 +190,19 @@ class GameScene extends Phaser.Scene {
         closeButton.destroy();
       });
   }
+
+  revealSafeCell() {
+    // Iterate through the board to find the first safe cell that is not revealed
+    for (let row = 0; row < this.board.length; row++) {
+      for (let col = 0; col < this.board[row].length; col++) {
+        if (!this.board[row][col].isRevealed && !this.board[row][col].isBomb) {
+          // Found a safe cell, reveal it
+          this.revealTile(this.board[row][col].tile, row, col);
+          return; // Exit the function after revealing the first safe cell found
+        }
+      }
+    }
+  }  
 
   chooseRowOrColumn() {
     // Criar um fundo semitransparente
