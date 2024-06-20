@@ -357,33 +357,33 @@ class GameScene extends Phaser.Scene {
   }
 
   showTutorial() {
-    // Criar um fundo semitransparente
+    // Create a solid black background
     let tutorialBackground = this.add.graphics();
-    tutorialBackground.fillStyle(0x000000, 0.7);
+    tutorialBackground.fillStyle(0x000000); // Solid black color
     tutorialBackground.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
-    // Texto detalhado do tutorial
+    // Detailed tutorial text
     let tutorialText = `
 Tutorial:
 
-1. Click on the cells to reveal the content.
-2. Avoid clicking on bombs! If you find a bomb, the game is over.
-3. Revealed cells can contain numbers from 1 to 3, which represent the coins you earn.
-4. Use the help if necessary:
-   - "Reveal safe cell" for 100 coins, which guarantees a cell without a bomb.
-5. Check the bomb indicators in the rows and columns to deduce where the bombs are.
-6. To advance to the next level reveal all the cells without bombs.
-7. Click "Cash Out" to collect your accumulated coins and add them to the total.
-8. If you do not "Cash Out" before finding a bomb, you will lose the coins collected in the current level.
+1. Click on cells to reveal their content.
+2. Avoid clicking on bombs! If you find a bomb, the game ends.
+3. Revealed cells may contain numbers from 1 to 3, representing the coins you earn.
+4. Use help if necessary:
+   - "Reveal safe cell" costs 100 coins and guarantees a cell without a bomb.
+5. Check bomb indicators in rows and columns to deduce bomb locations.
+6. To advance to the next level, reveal all cells without bombs.
+7. Click "Cash Out" to collect your accumulated coins and add them to your total.
+8. If you do not "Cash Out" before finding a bomb, you lose coins collected in the current level.
 9. To restart the game, click "Restart".
 
 Tips:
-- Plan your moves considering the bomb indicators in the rows and columns.
-- Use the help strategically to increase your chances of success.
+- Plan your moves considering bomb indicators in rows and columns.
+- Use help strategically to increase your chances of success.
 - Cash Out regularly to secure your accumulated coins.
 `;
 
-    // Exibir texto de tutorial com formatação e word wrap
+    // Display tutorial text with formatting and word wrap
     let tutorialTextObject = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, tutorialText, {
         fontSize: '24px', 
         fill: '#ffffff', 
@@ -391,7 +391,7 @@ Tips:
         wordWrap: { width: this.cameras.main.width - 40 }
     }).setOrigin(0.5, 0.5);
 
-    // Botão para fechar o tutorial
+    // Button to close the tutorial
     let closeButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 300, 'Close', {
         fontSize: '32px', 
         fill: '#ffffff', 
